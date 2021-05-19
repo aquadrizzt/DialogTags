@@ -1,0 +1,73 @@
+BACKUP ~AlignmentChoices/backup~
+AUTHOR ~aquadrizzt@gmail.com~
+VERSION ~1.0~ 
+
+/* Language Settings */
+AUTO_TRA ~AlignmentChoices/tra/%s~
+LANGUAGE ~English~ ~english~ ~AlignmentChoices/english.tra~
+
+BEGIN @0
+
+COPY_EXISTING_REGEXP GLOB ~.*\.dlg~ ~override~ 
+	READ_LONG 0x10 num_trans
+	READ_LONG 0x14 ofs_trans
+	READ_LONG 0x2c num_actions
+	READ_LONG 0x28 ofs_actions
+
+	//check if has actions 
+	PATCH_IF num_actions > 0 BEGIN
+
+		//iterate over all actions
+		
+		//update to the new string 
+		FOR (i=0; i<num_actions;i=i+1) BEGIN 
+			READ_LONG ofs_actions + i*0x8 action_i_offset
+			READ_LONG ofs_actions + i*0x8 + 0x4 action_i_length 
+			READ_ASCII action_i_offset action_i (action_i_length)
+			
+			//find any actions that update alignment globals
+			lawful = (NOT (~%action_i%~ STRING_CONTAINS_REGEXP ~IncrementGlobal("Law","GLOBAL",\([0-9]+\))~)) OR (NOT (~%action_i%~ STRING_CONTAINS_REGEXP ~IncrementGlobalOnceEx(".*","GLOBALLaw",\([0-9]+\))~))
+			chaotic = (NOT (~%action_i%~ STRING_CONTAINS_REGEXP ~IncrementGlobal("Law","GLOBAL",\(-[0-9]+\))~)) OR (NOT (~%action_i%~ STRING_CONTAINS_REGEXP ~IncrementGlobalOnceEx(".*","GLOBALLaw",\(-[0-9]+\))~)) 
+			good = (NOT (~%action_i%~ STRING_CONTAINS_REGEXP ~IncrementGlobal("Good","GLOBAL",\([0-9]+\))~)) OR (NOT (~%action_i%~ STRING_CONTAINS_REGEXP ~IncrementGlobalOnceEx(".*","GLOBALGood",\([0-9]+\))~))
+			evil = (NOT (~%action_i%~ STRING_CONTAINS_REGEXP ~IncrementGlobal("Good","GLOBAL",\(-[0-9]+\))~)) OR (NOT (~%action_i%~ STRING_CONTAINS_REGEXP ~IncrementGlobalOnceEx(".*","GLOBALGood",\(-[0-9]+\))~)) 
+
+			//find the relevant response state
+			PATCH_IF (lawful OR chaotic OR good OR evil) BEGIN 
+				FOR(j=0; j<num_trans;j=j+1) BEGIN 
+					READ_SHORT ofs_trans + j*0x20 action_flag_byte
+					READ_LONG ofs_trans + j*0x20 + 0x10 action_id
+
+					//replace existing response string with a new string 
+					PATCH_IF ((action_flag_byte & 5) AND (action_id = i)) BEGIN 
+						READ_STRREF ofs_trans + j*0x20 + 0x4 original_string 
+
+						PATCH_IF (lawful AND good) BEGIN 
+							SPRINT alignment_string @5 
+						END 
+						PATCH_IF (lawful AND evil) BEGIN 
+							SPRINT alignment_string @6
+						END 
+						PATCH_IF (lawful AND (NOT (good OR evil))) BEGIN 
+							SPRINT alignment_string @1
+						END 
+						PATCH_IF (chaotic AND good) BEGIN 
+							SPRINT alignment_string @7 
+						END 
+						PATCH_IF (chaotic AND evil) BEGIN 
+							SPRINT alignment_string @8
+						END 
+						PATCH_IF (chaotic AND (NOT (good OR evil))) BEGIN 
+							SPRINT alignment_string @2
+						END 
+						PATCH_IF ((NOT (lawful OR chaotic)) AND good) BEGIN 
+							SPRINT alignment_string @3
+						END 
+						PATCH_IF ((NOT (lawful OR chaotic)) AND evil) BEGIN 
+							SPRINT alignment_string @4
+						END 
+						SAY_EVALUATED ofs_trans + j*0x20 + 0x4 ~%alignment_string% %original_string%~
+					END 
+				END 
+			END 
+		END  
+	END 
