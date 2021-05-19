@@ -1,6 +1,6 @@
 BACKUP ~AlignmentChoices/backup~
 AUTHOR ~aquadrizzt@gmail.com~
-VERSION ~1.0~ 
+VERSION ~1.0a~ 
 
 /* Language Settings */
 AUTO_TRA ~AlignmentChoices/tra/%s~
