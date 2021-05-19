@@ -1,0 +1,29 @@
+// Vague
+@1001 = ~(Ethical)~
+@1002 = ~(Ethical)~
+@1003 = ~(Moral)~
+@1004 = ~(Moral)~
+@1005 = ~(Ethical/Moral)~
+@1006 = ~(Ethical/Moral)~
+@1007 = ~(Ethical/Moral)~
+@1008 = ~(Ethical/Moral)~
+
+// Informative
+@1101 = ~(Lawful)~ 
+@1102 = ~(Chaotic)~ 
+@1103 = ~(Good)~ 
+@1104 = ~(Evil)~
+@1105 = ~(Lawful Good)~
+@1106 = ~(Lawful Evil)~ 
+@1107 = ~(Chaotic Good)~ 
+@1108 = ~(Chaotic Evil)~
+
+// Precise
+@1201 = ~(Lawful +%ETHICAL%)~ 
+@1202 = ~(Chaotic +%ETHICAL%)~ 
+@1203 = ~(Good +%MORAL%)~ 
+@1204 = ~(Evil +%MORAL%)~
+@1205 = ~(Lawful +%ETHICAL%, Good +%MORAL%)~
+@1206 = ~(Lawful +%ETHICAL%, Evil +%MORAL%)~ 
+@1207 = ~(Chaotic +%ETHICAL%, Good +%MORAL%)~ 
+@1208 = ~(Chaotic +%ETHICAL%, Evil +%MORAL%)~

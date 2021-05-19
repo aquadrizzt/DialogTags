@@ -1,0 +1,48 @@
+BACKUP ~weidu_external/backup/AlignmentChoices~
+AUTHOR ~aquadrizzt@gmail.com~
+SUPPORT ~https://github.com/aquadrizzt/AlignmentChoices (enhanced by argent77)~
+VERSION ~2.0~
+
+ALWAYS
+  // required because of non-standard BACKUP path
+  OUTER_TEXT_SPRINT MOD_FOLDER ~AlignmentChoices~
+  // root folder for mutable data
+  OUTER_TEXT_SPRINT WORK_FOLDER ~weidu_external~
+
+  INCLUDE ~%MOD_FOLDER%/lib/functions.tph~
+END
+
+LANGUAGE ~English~
+         ~english~
+         ~AlignmentChoices/languages/english/setup.tra~
+         ~AlignmentChoices/languages/english/mod.tra~
+
+
+BEGIN @1  // Vague
+REQUIRE_PREDICATE (GAME_IS ~pstee~) @100  // Requires PST:EE.
+SUBCOMPONENT @0 // Highlight Alignment Choices
+DESIGNATED 1
+
+COPY_EXISTING_REGEXP GLOB ~.+\.dlg~ ~override~ 
+  LPF ADD_DLG_ALIGNMENT_INFO INT_VAR level = 0 END
+BUT_ONLY
+
+
+BEGIN @2  // Informative
+REQUIRE_PREDICATE (GAME_IS ~pstee~) @100  // Requires PST:EE.
+SUBCOMPONENT @0 // Highlight Alignment Choices
+DESIGNATED 2
+
+COPY_EXISTING_REGEXP GLOB ~.+\.dlg~ ~override~ 
+  LPF ADD_DLG_ALIGNMENT_INFO INT_VAR level = 1 END
+BUT_ONLY
+
+
+BEGIN @3  // Precise
+REQUIRE_PREDICATE (GAME_IS ~pstee~) @100  // Requires PST:EE.
+SUBCOMPONENT @0 // Highlight Alignment Choices
+DESIGNATED 3
+
+COPY_EXISTING_REGEXP GLOB ~.+\.dlg~ ~override~ 
+  LPF ADD_DLG_ALIGNMENT_INFO INT_VAR level = 2 END
+BUT_ONLY

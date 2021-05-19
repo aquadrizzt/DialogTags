@@ -1,0 +1,132 @@
+DEFINE_PATCH_FUNCTION ADD_DLG_ALIGNMENT_INFO
+INT_VAR
+  level = 1 // 0: fuzzy, 1: informative, 2: precise
+BEGIN
+	READ_LONG 0x2c num_actions
+
+	PATCH_IF (num_actions > 0) BEGIN
+    READ_LONG 0x10 num_trans
+    READ_LONG 0x14 ofs_trans
+    READ_LONG 0x28 ofs_actions
+
+    PATCH_IF (level < 0) BEGIN
+      SET level = 0
+    END ELSE PATCH_IF (level > 2) BEGIN
+      SET level = 2
+    END
+    SET strref_base = 1000 + (level * 100)
+
+		// iterate over all transitions
+    FOR (i = 0; i < num_trans; ++i) BEGIN
+      READ_LONG (ofs_trans + i*0x20) flags
+
+      // has transition text and associated action?
+      PATCH_IF ((flags & (BIT0 | BIT2)) = (BIT0 | BIT2)) BEGIN
+        READ_LONG (ofs_trans + i*0x20 + 0x10) action_idx
+
+        PATCH_IF (action_idx >= 0 && action_idx < num_actions) BEGIN
+          READ_LONG (ofs_actions + action_idx*0x8) action_i_offset
+          READ_LONG (ofs_actions + action_idx*0x8 + 0x4) action_i_length
+          READ_ASCII action_i_offset action_i (action_i_length)
+
+          // find any actions that update alignment globals: count ethical and moral independently
+          SET ETHICAL = 0
+          SET MORAL = 0
+          INNER_PATCH ~%action_i%~ BEGIN
+            REPLACE_EVALUATE CASE_INSENSITIVE
+              ~IncrementGlobal("Law","GLOBAL",\(-?[1-9][0-9]*\))~
+              BEGIN
+                PATCH_IF (IS_AN_INT ~MATCH1~) BEGIN
+                  SET ETHICAL += MATCH1
+                END
+              END
+              ~~
+            REPLACE_EVALUATE CASE_INSENSITIVE
+              ~IncrementGlobalOnceEx("[^"]*","GLOBALLaw",\(-?[1-9][0-9]*\))~
+              BEGIN
+                PATCH_IF (IS_AN_INT ~MATCH1~) BEGIN
+                  SET ETHICAL += MATCH1
+                END
+              END
+              ~~
+            REPLACE_EVALUATE CASE_INSENSITIVE
+              ~IncrementGlobal("Good","GLOBAL",\(-?[1-9][0-9]*\))~
+              BEGIN
+                PATCH_IF (IS_AN_INT ~MATCH1~) BEGIN
+                  SET MORAL += MATCH1
+                END
+              END
+              ~~
+            REPLACE_EVALUATE CASE_INSENSITIVE
+              ~IncrementGlobalOnceEx("[^"]*","GLOBALGood",\(-?[1-9][0-9]*\))~
+              BEGIN
+                PATCH_IF (IS_AN_INT ~MATCH1~) BEGIN
+                  SET MORAL += MATCH1
+                END
+              END
+              ~~
+          END
+
+          // evaluate results
+          SET lawful = (ETHICAL > 0) << 0
+          SET chaotic =  (ETHICAL < 0) << 1
+          SET good = (MORAL > 0) << 2
+          SET evil = (MORAL < 0) << 3
+          PATCH_IF (ETHICAL < 0) BEGIN SET ETHICAL = 0 - ETHICAL END
+          PATCH_IF (MORAL < 0) BEGIN SET MORAL = 0 - MORAL END
+
+          PATCH_MATCH (lawful | chaotic | good | evil) WITH
+            // Lawful
+            BIT0 BEGIN
+              SET strref = strref_base + 1
+              SPRINT alignment_string (AT ~strref~)
+            END
+            // Chaotic
+            BIT1 BEGIN
+              SET strref = strref_base + 2
+              SPRINT alignment_string (AT ~strref~)
+            END
+            // Good
+            BIT2 BEGIN
+              SET strref = strref_base + 3
+              SPRINT alignment_string (AT ~strref~)
+            END
+            // Evil
+            BIT3 BEGIN
+              SET strref = strref_base + 4
+              SPRINT alignment_string (AT ~strref~)
+            END
+            // Lawful Good
+            (BIT0 | BIT2) BEGIN
+              SET strref = strref_base + 5
+              SPRINT alignment_string (AT ~strref~)
+            END
+            // Lawful Evil
+            (BIT0 | BIT3) BEGIN
+              SET strref = strref_base + 6
+              SPRINT alignment_string (AT ~strref~)
+            END
+            // Chaotic Good
+            (BIT1 | BIT2) BEGIN
+              SET strref = strref_base + 7
+              SPRINT alignment_string (AT ~strref~)
+            END
+            // Chaotic Evil
+            (BIT1 | BIT3) BEGIN
+              SET strref = strref_base + 8
+              SPRINT alignment_string (AT ~strref~)
+            END
+            // No alignment modification
+            DEFAULT SPRINT alignment_string ~~
+          END
+
+          PATCH_IF (NOT ~%alignment_string%~ STR_EQ ~~) BEGIN
+            READ_STRREF (ofs_trans + i*0x20 + 0x4) original_string
+            SAY_EVALUATED (ofs_trans + i*0x20 + 0x4) ~%alignment_string% %original_string%~
+          END
+        END
+      END
+    END
+
+	END 
+END
