@@ -38,7 +38,7 @@ COPY_EXISTING_REGEXP GLOB ~.*\.dlg~ ~override~
 					READ_LONG ofs_trans + j*0x20 + 0x10 action_id
 
 					//replace existing response string with a new string 
-					PATCH_IF ((action_flag_byte & 5) AND (action_id = i)) BEGIN 
+					PATCH_IF ((action_flag_byte & 1) AND (action_flag_byte & 4) AND (action_id = i)) BEGIN 
 						READ_STRREF ofs_trans + j*0x20 + 0x4 original_string 
 
 						PATCH_IF (lawful AND good) BEGIN 
