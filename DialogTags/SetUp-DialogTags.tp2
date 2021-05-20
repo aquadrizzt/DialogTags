@@ -1,6 +1,6 @@
 BACKUP ~weidu_external/backup/DialogTags~
 SUPPORT ~https://github.com/aquadrizzt/DialogTags (enhanced by argent77)~
-VERSION ~2.0~
+VERSION ~2.1~
 
 ALWAYS
   // required because of non-standard BACKUP path
