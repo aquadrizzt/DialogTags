@@ -1,0 +1,55 @@
+// Alignment - Vague
+@1001 = ~(Ethical)~
+@1002 = ~(Ethical)~
+@1003 = ~(Moral)~
+@1004 = ~(Moral)~
+@1005 = ~(Ethical/Moral)~
+@1006 = ~(Ethical/Moral)~
+@1007 = ~(Ethical/Moral)~
+@1008 = ~(Ethical/Moral)~
+
+// Alignment - Informative
+@1101 = ~(Lawful)~ 
+@1102 = ~(Chaotic)~ 
+@1103 = ~(Good)~ 
+@1104 = ~(Evil)~
+@1105 = ~(Lawful Good)~
+@1106 = ~(Lawful Evil)~ 
+@1107 = ~(Chaotic Good)~ 
+@1108 = ~(Chaotic Evil)~
+
+// Alignment - Precise
+@1201 = ~(Lawful +%ETHICAL%)~ 
+@1202 = ~(Chaotic +%ETHICAL%)~ 
+@1203 = ~(Good +%MORAL%)~ 
+@1204 = ~(Evil +%MORAL%)~
+@1205 = ~(Lawful +%ETHICAL%, Good +%MORAL%)~
+@1206 = ~(Lawful +%ETHICAL%, Evil +%MORAL%)~ 
+@1207 = ~(Chaotic +%ETHICAL%, Good +%MORAL%)~ 
+@1208 = ~(Chaotic +%ETHICAL%, Evil +%MORAL%)~
+
+//Attributes - Informative
+@2001 = ~(Strength)~ 
+@2002 = ~(Dexterity)~ 
+@2003 = ~(Constitution)~ 
+@2004 = ~(Intelligence)~ 
+@2005 = ~(Wisdom)~ 
+@2006 = ~(Charisma)~ 
+@2007 = ~(Stealth)~ 
+@2008 = ~(Lockpicking)~ 
+@2009 = ~(Disable Traps)~ 
+@2010 = ~(Pick Pockets)~ 
+@2011 = ~(Fire Resistance)~ 
+
+//Attributes - Precise
+@2101 = ~(Strength %strength%)~ 
+@2102 = ~(Dexterity %dexterity%)~ 
+@2103 = ~(Constitution %constitution%)~ 
+@2104 = ~(Intelligence %intelligence%)~ 
+@2105 = ~(Wisdom %wisdom%)~ 
+@2106 = ~(Charisma %charisma%)~ 
+@2107 = ~(Stealth %stealth%)~ 
+@2108 = ~(Lockpicking %lockpicking%)~ 
+@2109 = ~(Disable Traps %traps%)~ 
+@2110 = ~(Pick Pockets %pickpockets%)~ 
+@2111 = ~(Fire Resistance %fire_res%)~ 
