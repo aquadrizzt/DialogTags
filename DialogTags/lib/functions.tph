@@ -4,7 +4,7 @@
 //--------------------------
 DEFINE_PATCH_FUNCTION ADD_DLG_ATTRIBUTE_INFO
   INT_VAR
-    level = 0 // 0: informative, 1: precise
+    level = 0 // 0: vague, 1: informative, 2: precise
   BEGIN
     READ_LONG 0x24 num_triggers
 
@@ -17,17 +17,17 @@ DEFINE_PATCH_FUNCTION ADD_DLG_ATTRIBUTE_INFO
 
       PATCH_IF (level < 0) BEGIN
         SET level = 0
-      END ELSE PATCH_IF (level > 1) BEGIN
-        SET level = 1
+      END ELSE PATCH_IF (level > 2) BEGIN
+        SET level = 2
       END
       SET strref_base = 2000 + (level * 100)
 
       // Comparison symbols
-      PATCH_IF (level = 1) BEGIN
+      PATCH_IF (level = 2) BEGIN
         // ...for precise display
         DEFINE_ASSOCIATIVE_ARRAY comparison BEGIN
-          ~0~ => ~<~
-          ~1~ => ~>~
+          ~0~ => ~-~
+          ~1~ => ~+~
         END
       END ELSE BEGIN
         // ...for informative display

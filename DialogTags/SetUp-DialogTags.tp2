@@ -16,6 +16,10 @@ LANGUAGE ~English~
          ~DialogTags/languages/english/setup.tra~
          ~DialogTags/languages/english/mod.tra~
 
+LANGUAGE ~Polish~
+         ~polish~
+         ~DialogTags/languages/polish/setup.tra~
+         ~DialogTags/languages/polish/mod.tra~
 
 //------------------
 // ALIGNMENT
@@ -30,7 +34,7 @@ COPY_EXISTING_REGEXP GLOB ~.+\.dlg~ ~override~
 BUT_ONLY
 
 
-BEGIN @2  // Informative
+BEGIN @2  // Informative (recommended)
 REQUIRE_PREDICATE (GAME_IS ~pstee~) @100  // Requires PST:EE.
 SUBCOMPONENT @0 // Highlight Alignment Choices
 DESIGNATED 2
@@ -52,7 +56,7 @@ BUT_ONLY
 //------------------
 // ATTRIBUTES
 //------------------
-BEGIN @2  // Informative
+BEGIN @5  // Vague (recommended)
 REQUIRE_PREDICATE (GAME_IS ~pstee~) @100  // Requires PST:EE.
 SUBCOMPONENT @4
 DESIGNATED 4
@@ -61,11 +65,20 @@ COPY_EXISTING_REGEXP GLOB ~.+\.dlg~ ~override~
   LPF ADD_DLG_ATTRIBUTE_INFO INT_VAR level = 0 END
 BUT_ONLY
 
-BEGIN @3  // Precise
+BEGIN @6  // Informative
 REQUIRE_PREDICATE (GAME_IS ~pstee~) @100  // Requires PST:EE.
 SUBCOMPONENT @4
 DESIGNATED 5
 
 COPY_EXISTING_REGEXP GLOB ~.+\.dlg~ ~override~
   LPF ADD_DLG_ATTRIBUTE_INFO INT_VAR level = 1 END
+BUT_ONLY
+
+BEGIN @3  // Precise
+REQUIRE_PREDICATE (GAME_IS ~pstee~) @100  // Requires PST:EE.
+SUBCOMPONENT @4
+DESIGNATED 6
+
+COPY_EXISTING_REGEXP GLOB ~.+\.dlg~ ~override~
+  LPF ADD_DLG_ATTRIBUTE_INFO INT_VAR level = 2 END
 BUT_ONLY
