@@ -96,7 +96,7 @@ DEFINE_PATCH_FUNCTION ADD_DLG_ATTRIBUTE_INFO
                   PATCH_IF (IS_AN_INT ~%MATCH2%~) BEGIN
                     PATCH_PHP_EACH stats_map AS name => symbol BEGIN
                       PATCH_IF (~%MATCH3%~ STR_EQ ~%symbol%~) BEGIN
-                        SET EVAL ~%name%~ = isNeg ? (0 - MATCH2 - 1) : MATCH2
+                        SET EVAL ~%name%~ = isNeg ? (0 - MATCH2) : MATCH2 + 1
                       END
                     END
                   END
@@ -110,7 +110,7 @@ DEFINE_PATCH_FUNCTION ADD_DLG_ATTRIBUTE_INFO
                   PATCH_IF (IS_AN_INT ~%MATCH2%~) BEGIN
                     PATCH_PHP_EACH stats_map AS name => symbol BEGIN
                       PATCH_IF (~%MATCH3%~ STR_EQ ~%symbol%~) BEGIN
-                        SET EVAL ~%name%~ = isNeg ? (MATCH2 + 1) : (0 - MATCH2)
+                        SET EVAL ~%name%~ = isNeg ? (MATCH2) : (0 - MATCH2 + 1)
                       END
                     END
                   END
