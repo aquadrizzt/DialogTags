@@ -18,14 +18,14 @@ LANGUAGE ~English~
 
 
 //------------------
-// ALIGNMENT 
+// ALIGNMENT
 //------------------
 BEGIN @1  // Vague
 REQUIRE_PREDICATE (GAME_IS ~pstee~) @100  // Requires PST:EE.
 SUBCOMPONENT @0 // Highlight Alignment Choices
 DESIGNATED 1
 
-COPY_EXISTING_REGEXP GLOB ~.+\.dlg~ ~override~ 
+COPY_EXISTING_REGEXP GLOB ~.+\.dlg~ ~override~
   LPF ADD_DLG_ALIGNMENT_INFO INT_VAR level = 0 END
 BUT_ONLY
 
@@ -35,7 +35,7 @@ REQUIRE_PREDICATE (GAME_IS ~pstee~) @100  // Requires PST:EE.
 SUBCOMPONENT @0 // Highlight Alignment Choices
 DESIGNATED 2
 
-COPY_EXISTING_REGEXP GLOB ~.+\.dlg~ ~override~ 
+COPY_EXISTING_REGEXP GLOB ~.+\.dlg~ ~override~
   LPF ADD_DLG_ALIGNMENT_INFO INT_VAR level = 1 END
 BUT_ONLY
 
@@ -45,27 +45,27 @@ REQUIRE_PREDICATE (GAME_IS ~pstee~) @100  // Requires PST:EE.
 SUBCOMPONENT @0 // Highlight Alignment Choices
 DESIGNATED 3
 
-COPY_EXISTING_REGEXP GLOB ~.+\.dlg~ ~override~ 
+COPY_EXISTING_REGEXP GLOB ~.+\.dlg~ ~override~
   LPF ADD_DLG_ALIGNMENT_INFO INT_VAR level = 2 END
 BUT_ONLY
 
 //------------------
-// ATTRIBUTES 
+// ATTRIBUTES
 //------------------
 BEGIN @2  // Informative
 REQUIRE_PREDICATE (GAME_IS ~pstee~) @100  // Requires PST:EE.
-SUBCOMPONENT @4 
+SUBCOMPONENT @4
 DESIGNATED 4
 
-COPY_EXISTING_REGEXP GLOB ~.+\.dlg~ ~override~ 
+COPY_EXISTING_REGEXP GLOB ~.+\.dlg~ ~override~
   LPF ADD_DLG_ATTRIBUTE_INFO INT_VAR level = 0 END
 BUT_ONLY
 
 BEGIN @3  // Precise
 REQUIRE_PREDICATE (GAME_IS ~pstee~) @100  // Requires PST:EE.
-SUBCOMPONENT @4 
+SUBCOMPONENT @4
 DESIGNATED 5
 
-COPY_EXISTING_REGEXP GLOB ~.+\.dlg~ ~override~ 
+COPY_EXISTING_REGEXP GLOB ~.+\.dlg~ ~override~
   LPF ADD_DLG_ATTRIBUTE_INFO INT_VAR level = 1 END
 BUT_ONLY

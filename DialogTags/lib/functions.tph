@@ -2,16 +2,18 @@
 // Automates detection and addition of alignment effects to dialog options
 // With extensive code borrowing from Argent77
 //--------------------------
-DEFINE_PATCH_FUNCTION ADD_DLG_ATTRIBUTE_INFO 
-  INT_VAR 
+DEFINE_PATCH_FUNCTION ADD_DLG_ATTRIBUTE_INFO
+  INT_VAR
     level = 0 // 0: informative, 1: precise
-  BEGIN 
+  BEGIN
     READ_LONG 0x24 num_triggers
 
     PATCH_IF (num_triggers > 0) BEGIN
       READ_LONG 0x10 num_trans
       READ_LONG 0x14 ofs_trans
       READ_LONG 0x20 ofs_triggers
+
+      // Checks and initializations
 
       PATCH_IF (level < 0) BEGIN
         SET level = 0
@@ -20,9 +22,57 @@ DEFINE_PATCH_FUNCTION ADD_DLG_ATTRIBUTE_INFO
       END
       SET strref_base = 2000 + (level * 100)
 
+      // Comparison symbols
+      PATCH_IF (level = 1) BEGIN
+        // ...for precise display
+        DEFINE_ASSOCIATIVE_ARRAY comparison BEGIN
+          ~0~ => ~<~
+          ~1~ => ~>~
+        END
+      END ELSE BEGIN
+        // ...for informative display
+        DEFINE_ASSOCIATIVE_ARRAY comparison BEGIN
+          ~0~ => ~-~
+          ~1~ => ~+~
+        END
+      END
+
+      // Map of "variable name => stat symbol" entries
+      DEFINE_ASSOCIATIVE_ARRAY stats_map BEGIN
+        // attributes...
+        ~strength~      => ~STR~
+        ~dexterity~     => ~DEX~
+        ~constitution~  => ~CON~
+        ~intelligence~  => ~INT~
+        ~wisdom~        => ~WIS~
+        ~charisma~      => ~CHR~
+        // ...or skills...
+        ~stealth~       => ~STEALTH~
+        ~lockpicking~   => ~LOCKPICKING~
+        ~pickpockets~   => ~PICKPOCKET~
+        ~traps~         => ~TRAPS~
+        // ... or fire res
+        ~fire_res~      => ~RESISTFIRE~
+      END
+
+      // Map of "variable name => strref offset" entries
+      DEFINE_ASSOCIATIVE_ARRAY strref_map BEGIN
+        ~strength~      => 1
+        ~dexterity~     => 2
+        ~constitution~  => 3
+        ~intelligence~  => 4
+        ~wisdom~        => 5
+        ~charisma~      => 6
+        ~stealth~       => 7
+        ~lockpicking~   => 8
+        ~pickpockets~   => 9
+        ~traps~         => 10
+        ~fire_res~      => 11
+      END
+
       //iterate over all transitions
-      FOR (i=0; i < num_trans; ++i) BEGIN 
-        READ_LONG (ofs_trans + i*0x20) flags 
+      FOR (i=0; i < num_trans; ++i) BEGIN
+        READ_LONG (ofs_trans + i*0x20) flags
         PATCH_IF ((flags & (BIT0 | BIT1)) = (BIT0 | BIT1)) BEGIN
           READ_LONG (ofs_trans + i*0x20 + 0xc) trigger_idx
 
@@ -31,125 +81,80 @@ DEFINE_PATCH_FUNCTION ADD_DLG_ATTRIBUTE_INFO
             READ_LONG (ofs_triggers + trigger_idx*0x8 + 0x4) trigger_i_length
             READ_ASCII trigger_i_offset trigger_i (trigger_i_length)
 
-            // find any triggers that check protagonist attributes...
-            SET strength = 0
-            SET dexterity = 0
-            SET constitution = 0
-            SET intelligence = 0
-            SET wisdom = 0
-            SET charisma = 0
-
-            // or skills... 
-            SET stealth = 0 
-            SET lockpicking = 0 
-            SET traps = 0
-            SET pickpockets = 0
-
-            // ... or fire res
-            SET fire_res = 0 
+            // find any triggers that check protagonist stats, skils or fire resistance
+            PATCH_PHP_EACH stats_map AS name => _ BEGIN
+              SET EVAL ~%name%~ = 0
+            END
 
             INNER_PATCH ~%trigger_i%~ BEGIN
 
               //minimum stat
               REPLACE_EVALUATE CASE_INSENSITIVE
-                ~CheckStatGT(Protagonist,\([1-9][0-9]*\),\([A-Za-z]*\))~
+                ~\(!?\)CheckStatGT(Protagonist,\([1-9][0-9]*\),\([A-Za-z]*\))~
                 BEGIN
-                  PATCH_IF (IS_AN_INT ~%MATCH1%~) BEGIN 
-                    PATCH_IF (~%MATCH2%~ STR_EQ ~STR~) BEGIN 
-                      SET strength = MATCH1 + 1
-                    END 
-                    PATCH_IF (~%MATCH2%~ STR_EQ ~DEX~) BEGIN 
-                      SET dexterity = MATCH1 + 1
-                    END 
-                    PATCH_IF (~%MATCH2%~ STR_EQ ~CON~) BEGIN 
-                      SET constitution = MATCH1 + 1
-                    END 
-                    PATCH_IF (~%MATCH2%~ STR_EQ ~INT~) BEGIN 
-                      SET intelligence = MATCH1 + 1
-                    END 
-                    PATCH_IF (~%MATCH2%~ STR_EQ ~WIS~) BEGIN 
-                      SET wisdom = MATCH1 + 1
-                    END 
-                    PATCH_IF (~%MATCH2%~ STR_EQ ~CHR~) BEGIN 
-                      SET charisma = MATCH1 + 1
-                    END 
-                    PATCH_IF (~%MATCH2%~ STR_EQ ~STEALTH~) BEGIN 
-                      SET stealth = MATCH1 + 1
-                    END 
-                    PATCH_IF (~%MATCH2%~ STR_EQ ~LOCKPICKING~) BEGIN 
-                      SET lockpicking = MATCH1 + 1
-                    END 
-                    PATCH_IF (~%MATCH2%~ STR_EQ ~PICKPOCKET~) BEGIN 
-                      SET pickpockets = MATCH1 + 1
-                    END 
-                    PATCH_IF (~%MATCH2%~ STR_EQ ~TRAPS~) BEGIN 
-                      SET traps = MATCH1 + 1
-                    END 
-                    PATCH_IF (~%MATCH2%~ STR_EQ ~RESISTFIRE~) BEGIN 
-                      SET fire_res = MATCH1 + 1
-                    END 
-                  END 
+                  SET isNeg = ~%MATCH1%~ STR_EQ ~!~
+                  PATCH_IF (IS_AN_INT ~%MATCH2%~) BEGIN
+                    PATCH_PHP_EACH stats_map AS name => symbol BEGIN
+                      PATCH_IF (~%MATCH3%~ STR_EQ ~%symbol%~) BEGIN
+                        SET EVAL ~%name%~ = isNeg ? (0 - MATCH2 - 1) : MATCH2
+                      END
+                    END
+                  END
                 END
               ~~
-            END 
 
-            SPRINT attribute_string ~~
-
-            PATCH_IF (strength > 0) BEGIN 
-              SET strref = strref_base + 1
-              SPRINT attribute_string (AT ~strref~)
+              REPLACE_EVALUATE CASE_INSENSITIVE
+                ~\(!?\)CheckStatLT(Protagonist,\([1-9][0-9]*\),\([A-Za-z]*\))~
+                BEGIN
+                  SET isNeg = ~%MATCH1%~ STR_EQ ~!~
+                  PATCH_IF (IS_AN_INT ~%MATCH2%~) BEGIN
+                    PATCH_PHP_EACH stats_map AS name => symbol BEGIN
+                      PATCH_IF (~%MATCH3%~ STR_EQ ~%symbol%~) BEGIN
+                        SET EVAL ~%name%~ = isNeg ? (MATCH2 + 1) : (0 - MATCH2)
+                      END
+                    END
+                  END
+                END
+                ~~
             END
-            PATCH_IF (dexterity > 0) BEGIN 
-              SET strref = strref_base + 2
-              SPRINT attribute_string (AT ~strref~)
-            END 
-            PATCH_IF (constitution > 0) BEGIN 
-              SET strref = strref_base + 3
-              SPRINT attribute_string (AT ~strref~)
-            END 
-            PATCH_IF (intelligence > 0) BEGIN 
-              SET strref = strref_base + 4
-              SPRINT attribute_string (AT ~strref~)
-            END 
-            PATCH_IF (wisdom > 0) BEGIN 
-              SET strref = strref_base + 5
-              SPRINT attribute_string (AT ~strref~)
-            END 
-            PATCH_IF (charisma > 0) BEGIN 
-              SET strref = strref_base + 6
-              SPRINT attribute_string (AT ~strref~)
-            END 
-            PATCH_IF (stealth > 0) BEGIN 
-              SET strref = strref_base + 7
-              SPRINT attribute_string (AT ~strref~)
-            END 
-            PATCH_IF (lockpicking > 0) BEGIN 
-              SET strref = strref_base + 8
-              SPRINT attribute_string (AT ~strref~)
-            END 
-            PATCH_IF (traps > 0) BEGIN 
-              SET strref = strref_base + 9
-              SPRINT attribute_string (AT ~strref~)
-            END 
-            PATCH_IF (pickpockets > 0) BEGIN 
-              SET strref = strref_base + 10
-              SPRINT attribute_string (AT ~strref~)
-            END 
-            PATCH_IF (fire_res > 0) BEGIN 
-              SET strref = strref_base + 11
-              SPRINT attribute_string (AT ~strref~)
-            END 
+
+            // collect attributes in array since triggers may contain multiple attribute checks
+            SET attributes = 0
+            PATCH_PHP_EACH strref_map AS name => strref_ofs BEGIN
+              SET value = EVAL ~%name%~
+              PATCH_IF (value != 0) BEGIN
+                SET idx = (value > 0)
+                TEXT_SPRINT cmp $comparison(~%idx%~)
+                SET value = ABS value
+                SET EVAL ~%name%~ = value
+                SET strref = strref_base + strref_ofs
+                SPRINT s (AT ~strref~)
+                TEXT_SPRINT $attributes(~%attributes%~) ~%s%~
+                SET attributes += 1
+              END
+            END
+
+            // assemble attribute string from array items
+            SPRINT attribute_string ~~
+            FOR (j = 0; j < attributes; ++j) BEGIN
+              PATCH_IF (j = 0) BEGIN
+                TEXT_SPRINT attribute_string $attributes(~%j%~)
+              END ELSE BEGIN
+                TEXT_SPRINT s $attributes(~%j%~)
+                TEXT_SPRINT attribute_string ~%attribute_string%, %s%~
+              END
+            END
 
             PATCH_IF (NOT ~%attribute_string%~ STR_EQ ~~) BEGIN
               READ_STRREF (ofs_trans + i*0x20 + 0x4) original_string
-              SAY_EVALUATED (ofs_trans + i*0x20 + 0x4) ~%attribute_string% %original_string%~
+              SAY_EVALUATED (ofs_trans + i*0x20 + 0x4) ~(%attribute_string%) %original_string%~
             END
-          END   
-        END 
-      END 
-    END 
-  END 
- 
+          END
+        END
+      END
+    END
+  END
+
 
 //--------------------------
 // Automates detection and addition of alignment effects to dialog options
@@ -159,9 +164,9 @@ DEFINE_PATCH_FUNCTION ADD_DLG_ALIGNMENT_INFO
 INT_VAR
   level = 1 // 0: vague, 1: informative, 2: precise
 BEGIN
-	READ_LONG 0x2c num_actions
+  READ_LONG 0x2c num_actions
 
-	PATCH_IF (num_actions > 0) BEGIN
+  PATCH_IF (num_actions > 0) BEGIN
     READ_LONG 0x10 num_trans
     READ_LONG 0x14 ofs_trans
     READ_LONG 0x28 ofs_actions
@@ -173,7 +178,7 @@ BEGIN
     END
     SET strref_base = 1000 + (level * 100)
 
-		// iterate over all transitions
+    // iterate over all transitions
     FOR (i = 0; i < num_trans; ++i) BEGIN
       READ_LONG (ofs_trans + i*0x20) flags
 
@@ -229,8 +234,8 @@ BEGIN
           SET chaotic =  (ETHICAL < 0) << 1
           SET good = (MORAL > 0) << 2
           SET evil = (MORAL < 0) << 3
-          PATCH_IF (ETHICAL < 0) BEGIN SET ETHICAL = 0 - ETHICAL END
-          PATCH_IF (MORAL < 0) BEGIN SET MORAL = 0 - MORAL END
+          SET ETHICAL = ABS ETHICAL
+          SET MORAL = ABS MORAL
 
           PATCH_MATCH (lawful | chaotic | good | evil) WITH
             // Lawful
@@ -285,5 +290,5 @@ BEGIN
       END
     END
 
-	END 
+  END
 END
