@@ -1,10 +1,10 @@
-@0 = ~Highlight Alignment Choices~
-@1 = ~Vague~
-@2 = ~Informative (recommended)~
-@3 = ~Precise~
-@5 = ~Vague (recommended)~ 
-@6 = ~Informative~ 
+@0 = ~Destacar Escolhas do Alinhamento~
+@1 = ~Vago~
+@2 = ~Informativo (recomendado)~
+@3 = ~Preciso~
+@5 = ~Vago (recomendado)~
+@6 = ~Informativo~
 
-@4 = ~Highlight Attribute Choices~
+@4 = ~Destacar Escolhas do Atributo~
 
-@100 = ~Requires PST:EE.~
+@100 = ~Requer o PST:EE.~
