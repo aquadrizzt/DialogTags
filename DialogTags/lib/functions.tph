@@ -32,8 +32,8 @@ DEFINE_PATCH_FUNCTION ADD_DLG_ATTRIBUTE_INFO
       END ELSE BEGIN
         // ...for informative display
         DEFINE_ASSOCIATIVE_ARRAY comparison BEGIN
-          ~0~ => ~-~
-          ~1~ => ~+~
+          ~0~ => ~: Fail~
+          ~1~ => ~: Success~
         END
       END
 

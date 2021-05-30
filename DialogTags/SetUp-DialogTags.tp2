@@ -1,6 +1,6 @@
 BACKUP ~weidu_external/backup/DialogTags~
 SUPPORT ~https://github.com/aquadrizzt/DialogTags (enhanced by argent77)~
-VERSION ~2.2~
+VERSION ~2.1~
 
 ALWAYS
   // required because of non-standard BACKUP path
@@ -21,6 +21,15 @@ LANGUAGE ~Polish~
          ~DialogTags/languages/polish/setup.tra~
          ~DialogTags/languages/polish/mod.tra~
 
+LANGUAGE ~Russian~
+         ~russian~
+         ~DialogTags/languages/russian/setup.tra~
+         ~DialogTags/languages/russian/mod.tra~
+
+LANGUAGE ~Brazilian Portuguese~
+         ~br_portuguese~
+         ~DialogTags/languages/br_portuguese/setup.tra~
+         ~DialogTags/languages/br_portuguese/mod.tra~
 //------------------
 // ALIGNMENT
 //------------------
