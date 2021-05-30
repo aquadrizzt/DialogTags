@@ -1,0 +1,68 @@
+// Alignment - Vague
+@1001 = ~(Etyczny)~
+@1002 = ~(Etyczny)~
+@1003 = ~(Moralny)~
+@1004 = ~(Moralny)~
+@1005 = ~(Etyczny/Moralny)~
+@1006 = ~(Etyczny/Moralny)~
+@1007 = ~(Etyczny/Moralny)~
+@1008 = ~(Etyczny/Moralny)~
+
+// Alignment - Informative
+@1101 = ~(Praworządny)~
+@1102 = ~(Chaotyczny)~
+@1103 = ~(Dobry)~
+@1104 = ~(Zły)~
+@1105 = ~(Praworządny Dobry)~
+@1106 = ~(Praworządny Zły)~
+@1107 = ~(Chaotyczny Dobry)~
+@1108 = ~(Chaotyczny Zły)~
+
+// Alignment - Precise
+@1201 = ~(Praworządny +%ETHICAL%)~
+@1202 = ~(Chaotyczny +%ETHICAL%)~
+@1203 = ~(Dobry +%MORAL%)~
+@1204 = ~(Zły +%MORAL%)~
+@1205 = ~(Praworządny +%ETHICAL%, Dobry +%MORAL%)~
+@1206 = ~(Praworządny +%ETHICAL%, Zły +%MORAL%)~
+@1207 = ~(Chaotyczny +%ETHICAL%, Dobry +%MORAL%)~
+@1208 = ~(Chaotyczny +%ETHICAL%, Zły +%MORAL%)~
+
+//Attributes - Vague 
+@2001 = ~Siła~
+@2002 = ~Zręczność~
+@2003 = ~Kondycja~
+@2004 = ~Inteligencja~
+@2005 = ~Mądrość~
+@2006 = ~Charyzma~
+@2007 = ~Krycie się w cieniu~
+@2008 = ~Otwieranie zamków~
+@2009 = ~Rozbrajanie pułapek~
+@2010 = ~Kradzież kieszonkowa~
+@2011 = ~Odporność na ogień~
+
+//Attributes - Informative
+@2101 = ~Siła%cmp%~
+@2102 = ~Zręczność%cmp%~
+@2103 = ~Kondycja%cmp%~
+@2104 = ~Inteligencja%cmp%~
+@2105 = ~Mądrość%cmp%~
+@2106 = ~Charyzma%cmp%~
+@2107 = ~Krycie się w cieniu%cmp%~
+@2108 = ~Otwieranie zamków%cmp%~
+@2109 = ~Rozbrajanie pułapek%cmp%~
+@2110 = ~Kradzież kieszonkowa%cmp%~
+@2111 = ~Odporność na ogień%cmp%~
+
+//Attributes - Precise
+@2201 = ~Siła %strength%%cmp%~
+@2202 = ~Zręczność %dexterity%%cmp%~
+@2203 = ~Kondycja %constitution%%cmp%~
+@2204 = ~Inteligencja %intelligence%%cmp%~
+@2205 = ~Mądrość %wisdom%%cmp%~
+@2206 = ~Charyzma %charisma%%cmp%~
+@2207 = ~Krycie się w cieniu %stealth%%cmp%~
+@2208 = ~Otwieranie zamków %lockpicking%%cmp%~
+@2209 = ~Rozbrajanie pułapek %traps%%cmp%~
+@2210 = ~Kradzież kieszonkowa %pickpockets%%cmp%~
+@2211 = ~Odporność na ogień %fire_res%%cmp%~

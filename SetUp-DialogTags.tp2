@@ -1,0 +1,93 @@
+BACKUP ~weidu_external/backup/DialogTags~
+SUPPORT ~https://github.com/aquadrizzt/DialogTags (enhanced by argent77)~
+VERSION ~2.1~
+
+ALWAYS
+  // required because of non-standard BACKUP path
+  OUTER_TEXT_SPRINT MOD_FOLDER ~DialogTags~
+  // root folder for mutable data
+  OUTER_TEXT_SPRINT WORK_FOLDER ~weidu_external~
+
+  INCLUDE ~%MOD_FOLDER%/lib/functions.tph~
+END
+
+LANGUAGE ~English~
+         ~english~
+         ~DialogTags/languages/english/setup.tra~
+         ~DialogTags/languages/english/mod.tra~
+
+LANGUAGE ~Polish~
+         ~polish~
+         ~DialogTags/languages/polish/setup.tra~
+         ~DialogTags/languages/polish/mod.tra~
+
+LANGUAGE ~Russian~
+         ~russian~
+         ~DialogTags/languages/russian/setup.tra~
+         ~DialogTags/languages/russian/mod.tra~
+
+LANGUAGE ~Brazilian Portuguese~
+         ~br_portuguese~
+         ~DialogTags/languages/br_portuguese/setup.tra~
+         ~DialogTags/languages/br_portuguese/mod.tra~
+//------------------
+// ALIGNMENT
+//------------------
+BEGIN @1  // Vague
+REQUIRE_PREDICATE (GAME_IS ~pstee~) @100  // Requires PST:EE.
+SUBCOMPONENT @0 // Highlight Alignment Choices
+DESIGNATED 1
+
+COPY_EXISTING_REGEXP GLOB ~.+\.dlg~ ~override~
+  LPF ADD_DLG_ALIGNMENT_INFO INT_VAR level = 0 END
+BUT_ONLY
+
+
+BEGIN @2  // Informative (recommended)
+REQUIRE_PREDICATE (GAME_IS ~pstee~) @100  // Requires PST:EE.
+SUBCOMPONENT @0 // Highlight Alignment Choices
+DESIGNATED 2
+
+COPY_EXISTING_REGEXP GLOB ~.+\.dlg~ ~override~
+  LPF ADD_DLG_ALIGNMENT_INFO INT_VAR level = 1 END
+BUT_ONLY
+
+
+BEGIN @3  // Precise
+REQUIRE_PREDICATE (GAME_IS ~pstee~) @100  // Requires PST:EE.
+SUBCOMPONENT @0 // Highlight Alignment Choices
+DESIGNATED 3
+
+COPY_EXISTING_REGEXP GLOB ~.+\.dlg~ ~override~
+  LPF ADD_DLG_ALIGNMENT_INFO INT_VAR level = 2 END
+BUT_ONLY
+
+//------------------
+// ATTRIBUTES
+//------------------
+BEGIN @5  // Vague (recommended)
+REQUIRE_PREDICATE (GAME_IS ~pstee~) @100  // Requires PST:EE.
+SUBCOMPONENT @4
+DESIGNATED 4
+
+COPY_EXISTING_REGEXP GLOB ~.+\.dlg~ ~override~
+  LPF ADD_DLG_ATTRIBUTE_INFO INT_VAR level = 0 END
+BUT_ONLY
+
+BEGIN @6  // Informative
+REQUIRE_PREDICATE (GAME_IS ~pstee~) @100  // Requires PST:EE.
+SUBCOMPONENT @4
+DESIGNATED 5
+
+COPY_EXISTING_REGEXP GLOB ~.+\.dlg~ ~override~
+  LPF ADD_DLG_ATTRIBUTE_INFO INT_VAR level = 1 END
+BUT_ONLY
+
+BEGIN @3  // Precise
+REQUIRE_PREDICATE (GAME_IS ~pstee~) @100  // Requires PST:EE.
+SUBCOMPONENT @4
+DESIGNATED 6
+
+COPY_EXISTING_REGEXP GLOB ~.+\.dlg~ ~override~
+  LPF ADD_DLG_ATTRIBUTE_INFO INT_VAR level = 2 END
+BUT_ONLY
